@@ -1,18 +1,21 @@
 import styled from "styled-components";
 import { BorderRadius, Color } from "../Constants";
 import { useState, useEffect } from "react";
-import { GetRating } from "../../Api";
+import { GetRating, GetStatus } from "../../Api";
 import RatingChart from "../RatingChart";
 
 const StartPage = () => {
   const [ratingInfo, setRatingInfo] = useState(null);
   const [hasFetchedRatingInfo, setHasFetchedRatingInfo] = useState(false);
   const [fetchingRatingInfo, setFetchingRatingInfo] = useState(false);
+  const [status, setStatus] = useState(null);
+  const [hasFetchedStatus, setHasFetchedStatus] = useState(false);
+  const [fetchingStatus, setFetchinsStatus] = useState(false);
 
   useEffect(() => {
     async function FetchRatingInfo() {
       setFetchingRatingInfo(true);
-      let response = await GetRating(false); //false: don't include hidden courses
+      let response = await GetRating();
       setFetchingRatingInfo(false);
       if (response.status === 200) {
         let json = await response.json();
@@ -22,44 +25,168 @@ const StartPage = () => {
       setHasFetchedRatingInfo(true);
     }
 
-    if (!hasFetchedRatingInfo) {
+    async function FetchStatus() {
+      setFetchinsStatus(true);
+      let response = await GetStatus();
+      setFetchinsStatus(false);
+      if (response.status === 200) {
+        let json = await response.json();
+        console.log(json);
+        setStatus(json);
+      }
+      setHasFetchedStatus(true);
+    }
+
+    if (!hasFetchedRatingInfo && !fetchingRatingInfo) {
       FetchRatingInfo();
     }
-  }, [ratingInfo, hasFetchedRatingInfo, fetchingRatingInfo]);
+
+    if (!hasFetchedStatus && !fetchingStatus) {
+      FetchStatus();
+    }
+  }, [
+    ratingInfo,
+    hasFetchedRatingInfo,
+    fetchingRatingInfo,
+    status,
+    fetchingStatus,
+    hasFetchedStatus,
+  ]);
 
   return (
     <Page>
-      <VerticalSpacing />
+      <VerticalSpacing height={1} />
       <CenterContainer>
         {ratingInfo ? (
           <>
             <RatingChartContainer>
               <RatingChart data={ratingInfo} height={"20rem"}></RatingChart>
             </RatingChartContainer>
-            <UserStatsPanel>
+          </>
+        ) : null}
+        <VerticalSpacing height={1} />
+        <UserStatsPanel>
+          {status ? (
+            <>
               <StatRow>
-                <StatColumn>Current rating:</StatColumn>
+                <StatColumn>Last play time:</StatColumn>
                 <StatColumn>
-                  {ratingInfo[ratingInfo.length - 1].rating}
+                  {GetLastPlayTimeText(status.lastPlayTime)}
                 </StatColumn>
               </StatRow>
               <VerticalSpacing height={0.4} />
               <StatRow>
-                <StatColumn>Active matches:</StatColumn>
-                <StatColumn>{24}</StatColumn>
+                <StatColumn>Current rating:</StatColumn>
+                <StatColumn>{status.rating}</StatColumn>
               </StatRow>
-            </UserStatsPanel>
-          </>
-        ) : null}
+              <VerticalSpacing height={0.4} />
+              <StatRow>
+                <StatColumn>Projected rating change:</StatColumn>
+                <StatColumn
+                  color={
+                    status.projectedRatingChange > 0 ? Color.Green : Color.Red
+                  }
+                >
+                  {status.projectedRatingChange > 0
+                    ? "+" + status.projectedRatingChange
+                    : status.projectedRatingChange}
+                </StatColumn>
+              </StatRow>
+              <VerticalSpacing height={0.4} />
+              <StatRow>
+                <StatColumn>Leading:</StatColumn>
+                <StatColumn
+                  color={
+                    status.leading > status.activeMatches / 2
+                      ? Color.Green
+                      : Color.Red
+                  }
+                >
+                  {(100 * status.leading) / status.activeMatches + "%"}
+                </StatColumn>
+              </StatRow>
+              <VerticalSpacing height={0.4} />
+              <StatRow>
+                <StatColumn>Leading (rating corrected):</StatColumn>
+                <StatColumn
+                  color={
+                    status.leadingRatingCorrected > status.activeMatches / 2
+                      ? Color.Green
+                      : Color.Red
+                  }
+                >
+                  {(100 * status.leadingRatingCorrected) /
+                    status.activeMatches +
+                    "%"}
+                </StatColumn>
+              </StatRow>
+            </>
+          ) : null}
+        </UserStatsPanel>
+        <VerticalSpacing height={1} />
+        <UserStatsPanel>
+          {status ? (
+            <>
+              <StatRow>
+                <StatColumn>Active matches:</StatColumn>
+                <StatColumn>{status.activeMatches}</StatColumn>
+              </StatRow>
+              <VerticalSpacing height={0.4} />
+              <StatRow>
+                <StatColumn>Matches won:</StatColumn>
+                <StatColumn>{status.won}</StatColumn>
+              </StatRow>
+              <VerticalSpacing height={0.4} />
+              <StatRow>
+                <StatColumn>Matches lost:</StatColumn>
+                <StatColumn>{status.lost}</StatColumn>
+              </StatRow>
+              <VerticalSpacing height={0.4} />
+              <StatRow>
+                <StatColumn>Total matches:</StatColumn>
+                <StatColumn>{status.won + status.lost}</StatColumn>
+              </StatRow>
+              <VerticalSpacing height={0.4} />
+              <StatRow>
+                <StatColumn>Bingos:</StatColumn>
+                <StatColumn>{status.bingos}</StatColumn>
+              </StatRow>
+              <VerticalSpacing height={0.4} />
+              <StatRow>
+                <StatColumn>Average time per move:</StatColumn>
+                <StatColumn>
+                  {status.averageTimePerMove
+                    ? status.averageTimePerMove / 1000 + " s"
+                    : "?"}
+                </StatColumn>
+              </StatRow>
+            </>
+          ) : null}
+        </UserStatsPanel>
       </CenterContainer>
     </Page>
   );
 };
 
+function GetLastPlayTimeText(lastPlayTime) {
+  let seconds = (Date.now() - new Date(lastPlayTime)) / 1000;
+  let minutes = seconds / 60;
+  let hours = minutes / 60;
+  if (minutes < 2) {
+    return seconds.toString().split(".")[0] + " s";
+  } else if (hours < 2) {
+    return minutes.toString().split(".")[0] + " min";
+  } else if (hours < 24) {
+    return hours.toString().split(".")[0] + " h";
+  } else {
+    return lastPlayTime.toString().replace("T", " ");
+  }
+}
+
 const Page = styled.div`
   background-color: ${Color.Dark};
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
 `;
 
 const CenterContainer = styled.div`
@@ -78,7 +205,10 @@ const StatRow = styled.div`
   justify-content: space-between;
 `;
 
-const StatColumn = styled.div``;
+const StatColumn = styled.div`
+  color: ${(props) =>
+    props ? (props.color ? props.color : Color.White) : Color.White};
+`;
 
 const UserStatsPanel = styled.div`
   background-color: ${Color.DarkLighter};
@@ -92,7 +222,7 @@ const UserStatsPanel = styled.div`
 `;
 
 const VerticalSpacing = styled.div`
-  min-height: ${(props) => (props ? props.height + "rem" : "2rem")};
+  min-height: ${(props) => (props.height ? props.height + "rem" : "2rem")};
 `;
 
 const RatingChartContainer = styled.div`
@@ -103,7 +233,6 @@ const RatingChartContainer = styled.div`
   padding-right: 2.2.rem;
   padding-bottom: 1rem;
   border-radius: ${BorderRadius.Default};
-  margin: 1rem;
 
   -webkit-box-shadow: 0px 0px 15px -5px rgba(0, 0, 0, 0.2);
   box-shadow: 0px 0px 15px -5px rgba(0, 0, 0, 0.2);

@@ -6,6 +6,7 @@ export const Color = {
   Wine: "#ede4da",
   Purple: "#9777c7",
   White: "#eeeeee",
+  Green: "#81c784",
 };
 
 export const BorderRadius = {

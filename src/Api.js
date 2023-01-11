@@ -4,6 +4,12 @@ export async function GetRating() {
   });
 }
 
+export async function GetStatus() {
+  return await fetch(GetBasePath() + "/bot/status", {
+    method: "GET",
+  });
+}
+
 export function GetBasePath() {
   let requestPath = "https://ledigasalar.online/betapet-bot-api";
   if (!process.env.NODE_ENV || process.env.NODE_ENV === "development") {
