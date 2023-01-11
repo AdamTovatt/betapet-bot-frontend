@@ -156,6 +156,11 @@ const StartPage = () => {
             </StatRow>
             <VerticalSpacing height={0.4} />
             <StatRow>
+              <StatColumn>Opponents waiting for us:</StatColumn>
+              <StatColumn>{status.opponentsWaitingForUs}</StatColumn>
+            </StatRow>
+            <VerticalSpacing height={0.4} />
+            <StatRow>
               <StatColumn>Matches won:</StatColumn>
               <StatColumn>{status.won}</StatColumn>
             </StatRow>
