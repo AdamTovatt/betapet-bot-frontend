@@ -46,6 +46,7 @@ const CenterContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-grow: 1;
   flex-direction: column;
   color: ${Color.White};
   font-family: "Jost";
@@ -57,9 +58,9 @@ const VerticalSpacing = styled.div`
 `;
 
 const RatingChartContainer = styled.div`
-  max-width: 30rem;
+  max-width: 80vw;
   max-height: 10rem;
-  min-width: 30rem;
+  width: 30rem;
 `;
 
 export default StartPage;
