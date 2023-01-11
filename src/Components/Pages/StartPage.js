@@ -3,6 +3,7 @@ import { BorderRadius, Color } from "../Constants";
 import { useState, useEffect } from "react";
 import { GetRating, GetStatus } from "../../Api";
 import RatingChart from "../RatingChart";
+import { BarLoader } from "react-spinners";
 
 const StartPage = () => {
   const [ratingInfo, setRatingInfo] = useState(null);
@@ -63,106 +64,115 @@ const StartPage = () => {
               <RatingChart data={ratingInfo} height={"20rem"}></RatingChart>
             </RatingChartContainer>
           </>
-        ) : null}
+        ) : (
+          <LoaderPanel>
+            <Loader />
+          </LoaderPanel>
+        )}
         <VerticalSpacing height={1} />
-        <UserStatsPanel>
-          {status ? (
-            <>
-              <StatRow>
-                <StatColumn>Last play time:</StatColumn>
-                <StatColumn>
-                  {GetLastPlayTimeText(status.lastPlayTime)}
-                </StatColumn>
-              </StatRow>
-              <VerticalSpacing height={0.4} />
-              <StatRow>
-                <StatColumn>Current rating:</StatColumn>
-                <StatColumn>{status.rating}</StatColumn>
-              </StatRow>
-              <VerticalSpacing height={0.4} />
-              <StatRow>
-                <StatColumn>Projected rating change:</StatColumn>
-                <StatColumn
-                  color={
-                    status.projectedRatingChange > 0 ? Color.Green : Color.Red
-                  }
-                >
-                  {status.projectedRatingChange > 0
-                    ? "+" + status.projectedRatingChange
-                    : status.projectedRatingChange}
-                </StatColumn>
-              </StatRow>
-              <VerticalSpacing height={0.4} />
-              <StatRow>
-                <StatColumn>Leading:</StatColumn>
-                <StatColumn
-                  color={
-                    status.leading > status.activeMatches / 2
-                      ? Color.Green
-                      : Color.Red
-                  }
-                >
-                  {(100 * status.leading) / status.activeMatches + "%"}
-                </StatColumn>
-              </StatRow>
-              <VerticalSpacing height={0.4} />
-              <StatRow>
-                <StatColumn>Leading (rating corrected):</StatColumn>
-                <StatColumn
-                  color={
-                    status.leadingRatingCorrected > status.activeMatches / 2
-                      ? Color.Green
-                      : Color.Red
-                  }
-                >
-                  {(100 * status.leadingRatingCorrected) /
-                    status.activeMatches +
-                    "%"}
-                </StatColumn>
-              </StatRow>
-            </>
-          ) : null}
-        </UserStatsPanel>
+
+        {status ? (
+          <UserStatsPanel>
+            <StatRow>
+              <StatColumn>Last play time:</StatColumn>
+              <StatColumn>
+                {GetLastPlayTimeText(status.lastPlayTime)}
+              </StatColumn>
+            </StatRow>
+            <VerticalSpacing height={0.4} />
+            <StatRow>
+              <StatColumn>Current rating:</StatColumn>
+              <StatColumn>{status.rating}</StatColumn>
+            </StatRow>
+            <VerticalSpacing height={0.4} />
+            <StatRow>
+              <StatColumn>Projected rating change:</StatColumn>
+              <StatColumn
+                color={
+                  status.projectedRatingChange > 0 ? Color.Green : Color.Red
+                }
+              >
+                {status.projectedRatingChange > 0
+                  ? "+" + status.projectedRatingChange
+                  : status.projectedRatingChange}
+              </StatColumn>
+            </StatRow>
+            <VerticalSpacing height={0.4} />
+            <StatRow>
+              <StatColumn>Leading:</StatColumn>
+              <StatColumn
+                color={
+                  status.leading > status.activeMatches / 2
+                    ? Color.Green
+                    : Color.Red
+                }
+              >
+                {(100 * status.leading) / status.activeMatches + "%"}
+              </StatColumn>
+            </StatRow>
+            <VerticalSpacing height={0.4} />
+            <StatRow>
+              <StatColumn>Leading (rating corrected):</StatColumn>
+              <StatColumn
+                color={
+                  status.leadingRatingCorrected > status.activeMatches / 2
+                    ? Color.Green
+                    : Color.Red
+                }
+              >
+                {(100 * status.leadingRatingCorrected) / status.activeMatches +
+                  "%"}
+              </StatColumn>
+            </StatRow>
+          </UserStatsPanel>
+        ) : (
+          <LoaderPanel>
+            <Loader />
+          </LoaderPanel>
+        )}
         <VerticalSpacing height={1} />
-        <UserStatsPanel>
-          {status ? (
-            <>
-              <StatRow>
-                <StatColumn>Active matches:</StatColumn>
-                <StatColumn>{status.activeMatches}</StatColumn>
-              </StatRow>
-              <VerticalSpacing height={0.4} />
-              <StatRow>
-                <StatColumn>Matches won:</StatColumn>
-                <StatColumn>{status.won}</StatColumn>
-              </StatRow>
-              <VerticalSpacing height={0.4} />
-              <StatRow>
-                <StatColumn>Matches lost:</StatColumn>
-                <StatColumn>{status.lost}</StatColumn>
-              </StatRow>
-              <VerticalSpacing height={0.4} />
-              <StatRow>
-                <StatColumn>Total matches:</StatColumn>
-                <StatColumn>{status.won + status.lost}</StatColumn>
-              </StatRow>
-              <VerticalSpacing height={0.4} />
-              <StatRow>
-                <StatColumn>Bingos:</StatColumn>
-                <StatColumn>{status.bingos}</StatColumn>
-              </StatRow>
-              <VerticalSpacing height={0.4} />
-              <StatRow>
-                <StatColumn>Average time per move:</StatColumn>
-                <StatColumn>
-                  {status.averageTimePerMove
-                    ? status.averageTimePerMove / 1000 + " s"
-                    : "?"}
-                </StatColumn>
-              </StatRow>
-            </>
-          ) : null}
-        </UserStatsPanel>
+        {status ? (
+          <UserStatsPanel>
+            <StatRow>
+              <StatColumn>Active matches:</StatColumn>
+              <StatColumn>{status.activeMatches}</StatColumn>
+            </StatRow>
+            <VerticalSpacing height={0.4} />
+            <StatRow>
+              <StatColumn>Matches won:</StatColumn>
+              <StatColumn>{status.won}</StatColumn>
+            </StatRow>
+            <VerticalSpacing height={0.4} />
+            <StatRow>
+              <StatColumn>Matches lost:</StatColumn>
+              <StatColumn>{status.lost}</StatColumn>
+            </StatRow>
+            <VerticalSpacing height={0.4} />
+            <StatRow>
+              <StatColumn>Total matches:</StatColumn>
+              <StatColumn>{status.won + status.lost}</StatColumn>
+            </StatRow>
+            <VerticalSpacing height={0.4} />
+            <StatRow>
+              <StatColumn>Bingos:</StatColumn>
+              <StatColumn>{status.bingos}</StatColumn>
+            </StatRow>
+            <VerticalSpacing height={0.4} />
+            <StatRow>
+              <StatColumn>Average time per move:</StatColumn>
+              <StatColumn>
+                {status.averageTimePerMove
+                  ? status.averageTimePerMove / 1000 + " s"
+                  : "?"}
+              </StatColumn>
+            </StatRow>
+          </UserStatsPanel>
+        ) : (
+          <LoaderPanel>
+            <Loader />
+          </LoaderPanel>
+        )}
+        <VerticalSpacing height={1} />
       </CenterContainer>
     </Page>
   );
@@ -182,6 +192,31 @@ function GetLastPlayTimeText(lastPlayTime) {
     return lastPlayTime.toString().replace("T", " ");
   }
 }
+
+const Loader = () => {
+  return (
+    <BarLoader
+      color={Color.Purple}
+      height={17}
+      speedMultiplier={1.2}
+      width={400}
+    />
+  );
+};
+
+const LoaderPanel = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: ${Color.DarkLighter};
+  max-width: 80vw;
+  width: 30rem;
+  border-radius: ${BorderRadius.Default};
+  padding: 2rem;
+
+  -webkit-box-shadow: 0px 0px 15px -5px rgba(0, 0, 0, 0.2);
+  box-shadow: 0px 0px 15px -5px rgba(0, 0, 0, 0.2);
+`;
 
 const Page = styled.div`
   background-color: ${Color.Dark};
