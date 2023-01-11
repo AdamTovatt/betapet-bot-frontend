@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { Color } from "../Constants";
+import { BorderRadius, Color } from "../Constants";
 import { useState, useEffect } from "react";
 import { GetRating } from "../../Api";
 import RatingChart from "../RatingChart";
@@ -28,19 +28,39 @@ const StartPage = () => {
   }, [ratingInfo, hasFetchedRatingInfo, fetchingRatingInfo]);
 
   return (
-    <>
-      <VerticalSpacing></VerticalSpacing>
+    <Page>
+      <VerticalSpacing />
       <CenterContainer>
         {ratingInfo ? (
-          <RatingChartContainer>
-            Current rating: {ratingInfo[ratingInfo.length - 1].rating}
-            <RatingChart data={ratingInfo}></RatingChart>
-          </RatingChartContainer>
+          <>
+            <RatingChartContainer>
+              <RatingChart data={ratingInfo} height={"20rem"}></RatingChart>
+            </RatingChartContainer>
+            <UserStatsPanel>
+              <StatRow>
+                <StatColumn>Current rating:</StatColumn>
+                <StatColumn>
+                  {ratingInfo[ratingInfo.length - 1].rating}
+                </StatColumn>
+              </StatRow>
+              <VerticalSpacing height={0.4} />
+              <StatRow>
+                <StatColumn>Active matches:</StatColumn>
+                <StatColumn>{24}</StatColumn>
+              </StatRow>
+            </UserStatsPanel>
+          </>
         ) : null}
       </CenterContainer>
-    </>
+    </Page>
   );
 };
+
+const Page = styled.div`
+  background-color: ${Color.Dark};
+  width: 100vw;
+  height: 100vh;
+`;
 
 const CenterContainer = styled.div`
   display: flex;
@@ -53,14 +73,40 @@ const CenterContainer = styled.div`
   font-size: 1.2rem;
 `;
 
+const StatRow = styled.div`
+  display: flex;
+  justify-content: space-between;
+`;
+
+const StatColumn = styled.div``;
+
+const UserStatsPanel = styled.div`
+  background-color: ${Color.DarkLighter};
+  max-width: 80vw;
+  width: 30rem;
+  border-radius: ${BorderRadius.Default};
+  padding: 2rem;
+
+  -webkit-box-shadow: 0px 0px 15px -5px rgba(0, 0, 0, 0.2);
+  box-shadow: 0px 0px 15px -5px rgba(0, 0, 0, 0.2);
+`;
+
 const VerticalSpacing = styled.div`
-  min-height: 2rem;
+  min-height: ${(props) => (props ? props.height + "rem" : "2rem")};
 `;
 
 const RatingChartContainer = styled.div`
   max-width: 80vw;
-  max-height: 10rem;
   width: 30rem;
+  background-color: ${Color.DarkLighter};
+  padding: 2rem;
+  padding-right: 2.2.rem;
+  padding-bottom: 1rem;
+  border-radius: ${BorderRadius.Default};
+  margin: 1rem;
+
+  -webkit-box-shadow: 0px 0px 15px -5px rgba(0, 0, 0, 0.2);
+  box-shadow: 0px 0px 15px -5px rgba(0, 0, 0, 0.2);
 `;
 
 export default StartPage;

@@ -60,25 +60,44 @@ const StyledTooltip = styled(TooltipWrapper)`
   }
 `;
 
-const CHART_HEIGHT = 300;
+const StyledXItem = styled.div`
+  font-size: 0.8rem;
+`;
+
+const StyledXWrapper = styled.div`
+  max-width: 100%;
+  display: flex;
+  justify-content: space-between;
+`;
+
+const StyledYItem = styled.div`
+  font-size: 1rem;
+`;
+
 const CHART_LINES_FLEXURE = 1;
 
 const X_AXIS = (steps) => {
   return {
     key: "xValue",
     step: steps,
+    component: <StyledXItem></StyledXItem>,
+    sectionComponent: <StyledXWrapper></StyledXWrapper>,
   };
 };
 
 const Y_AXIS = (max, min) => {
-  return { maxValue: max, minValue: min };
+  return {
+    maxValue: max,
+    minValue: min,
+    component: <StyledYItem></StyledYItem>,
+  };
 };
 
 const CONFIG = {
   rating: {
     label: "rating",
     isFilled: false,
-    component: <StyledPath strokeColor="#3ab997" strokeWidth={2} />,
+    component: <StyledPath strokeColor={Color.Purple} strokeWidth={2} />,
   },
 };
 
@@ -86,14 +105,14 @@ const TOOLTIP = {
   isVisible: true,
   component: <StyledTooltip textColor={Color.White} />,
   hints: {
-    rating: <StyledHint backgroundColor="#3ab997" />,
+    rating: <StyledHint backgroundColor={Color.Purple} />,
   },
 };
 
-const RatingChart = ({ data }) => {
+const RatingChart = ({ data, height }) => {
   return (
     <LineChart
-      height={CHART_HEIGHT}
+      height={height}
       flexure={CHART_LINES_FLEXURE}
       tooltip={TOOLTIP}
       yAxis={Y_AXIS(
@@ -103,6 +122,7 @@ const RatingChart = ({ data }) => {
       xAxis={X_AXIS(data.length / 2)}
       config={CONFIG}
       data={data}
+      backgroundColor={Color.Red}
     />
   );
 };
