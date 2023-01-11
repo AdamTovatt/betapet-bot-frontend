@@ -12,6 +12,7 @@ const StartPage = () => {
   const [status, setStatus] = useState(null);
   const [hasFetchedStatus, setHasFetchedStatus] = useState(false);
   const [fetchingStatus, setFetchinsStatus] = useState(false);
+  const [counter, setCounter] = useState(0);
 
   useEffect(() => {
     async function FetchRatingInfo() {
@@ -45,6 +46,21 @@ const StartPage = () => {
     if (!hasFetchedStatus && !fetchingStatus) {
       FetchStatus();
     }
+
+    const interval = setInterval(() => {
+      setCounter(counter + 1);
+
+      if (counter !== 0 && counter % 60 === 0) {
+        FetchStatus();
+      }
+      if (counter !== 0 && counter % 300 === 0) {
+        FetchRatingInfo();
+        setCounter(0);
+      }
+    }, 1000);
+    return () => {
+      clearInterval(interval);
+    };
   }, [
     ratingInfo,
     hasFetchedRatingInfo,
@@ -52,6 +68,7 @@ const StartPage = () => {
     status,
     fetchingStatus,
     hasFetchedStatus,
+    counter,
   ]);
 
   return (
