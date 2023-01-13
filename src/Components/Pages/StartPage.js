@@ -1,9 +1,10 @@
 import styled from "styled-components";
 import { BorderRadius, Color } from "../Constants";
 import { useState, useEffect } from "react";
-import { GetRating, GetStatus } from "../../Api";
+import { GetRating, GetStatus, GetChatResponse } from "../../Api";
 import RatingChart from "../RatingChart";
 import { BarLoader } from "react-spinners";
+import TextField from "../Input/TextField";
 
 const StartPage = () => {
   const [ratingInfo, setRatingInfo] = useState(null);
@@ -13,6 +14,7 @@ const StartPage = () => {
   const [hasFetchedStatus, setHasFetchedStatus] = useState(false);
   const [fetchingStatus, setFetchinsStatus] = useState(false);
   const [counter, setCounter] = useState(0);
+  const [botChatAnswer, setBotChatAnswer] = useState(null);
 
   useEffect(() => {
     async function FetchRatingInfo() {
@@ -195,10 +197,38 @@ const StartPage = () => {
           </LoaderPanel>
         )}
         <VerticalSpacing height={1} />
+        <TextField
+          onSumbit={(text) => {
+            GetApiResponseOnChat(text, setBotChatAnswer);
+          }}
+          color={Color.DarkLighter}
+          placeHolder={"Write a message to test the response..."}
+          title={"Test the chat function"}
+        ></TextField>
+        <VerticalSpacing height={1} />
+        {botChatAnswer ? (
+          <>
+            <UserStatsPanel>
+              <StatRow>
+                <StatColumn>{botChatAnswer}</StatColumn>
+              </StatRow>
+            </UserStatsPanel>
+            <VerticalSpacing height={1} />
+          </>
+        ) : null}
       </CenterContainer>
     </Page>
   );
 };
+
+async function GetApiResponseOnChat(message, setMessage) {
+  let result = await GetChatResponse(message);
+
+  if (result.status === 200) {
+    let json = await result.json();
+    setMessage(json.message);
+  }
+}
 
 function GetLastPlayTimeText(lastPlayTime) {
   let seconds = (Date.now() - new Date(lastPlayTime)) / 1000;

@@ -10,6 +10,15 @@ export async function GetStatus() {
   });
 }
 
+export async function GetChatResponse(message) {
+  return await fetch(
+    GetBasePath() + "/bot/getChatResponse?message=" + message,
+    {
+      method: "GET",
+    }
+  );
+}
+
 export function GetBasePath() {
   let requestPath = "https://ledigasalar.online/betapet-bot-api";
   if (!process.env.NODE_ENV || process.env.NODE_ENV === "development") {
