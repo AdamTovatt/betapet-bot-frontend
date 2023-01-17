@@ -79,6 +79,7 @@ const StartPage = () => {
       }
       if (counter !== 0 && counter % 300 === 0) {
         FetchRatingInfo();
+        FetchMatches();
         setCounter(0);
       }
     }, 1000);
@@ -254,6 +255,7 @@ const StartPage = () => {
             <Loader />
           </LoaderPanel>
         )}
+        <VerticalSpacing height={2} />
       </CenterContainer>
     </Page>
   );
