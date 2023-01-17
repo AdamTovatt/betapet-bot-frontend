@@ -1,10 +1,13 @@
 import styled from "styled-components";
 import { BorderRadius, Color } from "../Constants";
 import { useState, useEffect } from "react";
-import { GetRating, GetStatus, GetChatResponse } from "../../Api";
+import { GetRating, GetStatus, GetChatResponse, GetMatches } from "../../Api";
 import RatingChart from "../RatingChart";
 import { BarLoader } from "react-spinners";
 import TextField from "../Input/TextField";
+import MatchSummary from "../MatchSummary";
+import VerticalSpacing from "../VerticalSpacing";
+import { GetTimeSinceDate } from "../../Functions";
 
 const StartPage = () => {
   const [ratingInfo, setRatingInfo] = useState(null);
@@ -15,6 +18,9 @@ const StartPage = () => {
   const [fetchingStatus, setFetchinsStatus] = useState(false);
   const [counter, setCounter] = useState(0);
   const [botChatAnswer, setBotChatAnswer] = useState(null);
+  const [matches, setMatches] = useState(null);
+  const [hasFetchedMatches, setHasFetchedMatches] = useState(false);
+  const [isFetchingMatches, setIsFetchingMatches] = useState(false);
 
   useEffect(() => {
     async function FetchRatingInfo() {
@@ -39,6 +45,22 @@ const StartPage = () => {
         setStatus(json);
       }
       setHasFetchedStatus(true);
+      setIsFetchingMatches(false);
+    }
+
+    async function FetchMatches() {
+      let response = await GetMatches();
+      if (response.status === 200) {
+        let json = await response.json();
+        console.log(json);
+        setMatches(json);
+      }
+      setHasFetchedMatches(true);
+    }
+
+    if (!hasFetchedMatches && !isFetchingMatches) {
+      FetchMatches();
+      setIsFetchingMatches(true);
     }
 
     if (!hasFetchedRatingInfo && !fetchingRatingInfo) {
@@ -94,9 +116,7 @@ const StartPage = () => {
           <UserStatsPanel>
             <StatRow>
               <StatColumn>Last play time:</StatColumn>
-              <StatColumn>
-                {GetLastPlayTimeText(status.lastPlayTime)}
-              </StatColumn>
+              <StatColumn>{GetTimeSinceDate(status.lastPlayTime)}</StatColumn>
             </StatRow>
             <VerticalSpacing height={0.4} />
             <StatRow>
@@ -126,7 +146,8 @@ const StartPage = () => {
                     : Color.Red
                 }
               >
-                {Math.round((100 * status.leading) / status.activeMatches) + "%"}
+                {Math.round((100 * status.leading) / status.activeMatches) +
+                  "%"}
               </StatColumn>
             </StatRow>
             <VerticalSpacing height={0.4} />
@@ -139,8 +160,9 @@ const StartPage = () => {
                     : Color.Red
                 }
               >
-                {Math.round((100 * status.leadingRatingCorrected) / status.activeMatches) +
-                  "%"}
+                {Math.round(
+                  (100 * status.leadingRatingCorrected) / status.activeMatches
+                ) + "%"}
               </StatColumn>
             </StatRow>
           </UserStatsPanel>
@@ -216,6 +238,20 @@ const StartPage = () => {
             <VerticalSpacing height={1} />
           </>
         ) : null}
+        <VerticalSpacing height={1} />
+        <UserStatsPanel padding={1} width={32}>
+          {matches ? (
+            <>
+              <MatchSummary match={matches[0]} />
+              <VerticalSpacing height={0.8} />
+              <MatchSummary match={matches[1]} />
+              <VerticalSpacing height={0.8} />
+              <MatchSummary match={matches[2]} />
+            </>
+          ) : (
+            <Loader />
+          )}
+        </UserStatsPanel>
       </CenterContainer>
     </Page>
   );
@@ -227,21 +263,6 @@ async function GetApiResponseOnChat(message, setMessage) {
   if (result.status === 200) {
     let json = await result.json();
     setMessage(json.message);
-  }
-}
-
-function GetLastPlayTimeText(lastPlayTime) {
-  let seconds = (Date.now() - new Date(lastPlayTime)) / 1000;
-  let minutes = seconds / 60;
-  let hours = minutes / 60;
-  if (minutes < 2) {
-    return seconds.toString().split(".")[0] + " s";
-  } else if (hours < 2) {
-    return minutes.toString().split(".")[0] + " min";
-  } else if (hours < 24) {
-    return hours.toString().split(".")[0] + " h";
-  } else {
-    return lastPlayTime.toString().replace("T", " ");
   }
 }
 
@@ -300,16 +321,12 @@ const StatColumn = styled.div`
 const UserStatsPanel = styled.div`
   background-color: ${Color.DarkLighter};
   max-width: 80vw;
-  width: 30rem;
+  width: ${(props) => (props.width ? props.width + "rem" : "30rem")};
   border-radius: ${BorderRadius.Default};
-  padding: 2rem;
+  padding: ${(props) => (props.padding ? props.padding + "rem" : "2rem")};
 
   -webkit-box-shadow: 0px 0px 15px -5px rgba(0, 0, 0, 0.2);
   box-shadow: 0px 0px 15px -5px rgba(0, 0, 0, 0.2);
-`;
-
-const VerticalSpacing = styled.div`
-  min-height: ${(props) => (props.height ? props.height + "rem" : "2rem")};
 `;
 
 const RatingChartContainer = styled.div`
