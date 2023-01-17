@@ -2,20 +2,26 @@ import styled from "styled-components";
 import { GetTimeSinceDate } from "../Functions";
 import { BorderRadius, Color } from "./Constants";
 import VerticalSpacing from "./VerticalSpacing";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 const MatchSummary = ({ match }) => {
+  const matches = useMediaQuery("(min-width:540px)");
+
   return (
     <SummaryBackground
       borderColor={match.ratingChange > 0 ? Color.Green : Color.Red}
+      active={match.active}
     >
       <SummaryContent>
         <SummaryColumn>
-          <SummaryRow align={"left"}>{match.ratingChange} rating</SummaryRow>
+          <SummaryRow align={"left"}>
+            {(match.ratingChange > 0 ? "+" : "") + match.ratingChange} rating
+          </SummaryRow>
           <SummaryRow align={"left"}>{match.completion}% completion</SummaryRow>
           <VerticalSpacing height={1} />
           <SummaryRow align={"left"}>
             <ScorePill
-              width={10}
+              width={matches ? 10 : 8}
               ourScore={match.ourScore}
               theirScore={match.theirScore}
             />
@@ -61,6 +67,9 @@ const ScorePillBackground = styled.div`
 const OurScore = styled.div`
   text-align: center;
   min-height: 2rem;
+  @media (max-width: 540px) {
+    min-height: 1rem;
+  }
   background-color: ${Color.Green};
   width: ${(props) => props.width + "rem"};
   border-radius: ${BorderRadius.Default}
@@ -75,6 +84,9 @@ const OurScore = styled.div`
 const TheirScore = styled.div`
   text-align: center;
   min-height: 2rem;
+  @media (max-width: 540px) {
+    min-height: 1rem;
+  }
   background-color: ${Color.Red};
   width: ${(props) => props.width + "rem"};
   border-radius: ${(props) => (props.bothRound ? BorderRadius.Default : 0)}
@@ -99,11 +111,16 @@ const SummaryContent = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+
+  @media (max-width: 540px) {
+    font-size: 1rem;
+  }
 `;
 
 const SummaryBackground = styled.div`
+  opacity: ${(props) => (props.active ? 1 : 0.3)};
   background-color: ${Color.DarkLightest};
-  width: 100%;
+  width: auto;
   min-height: 4rem;
   border-radius: ${BorderRadius.Default};
   border: 1px solid ${(props) => props.borderColor};

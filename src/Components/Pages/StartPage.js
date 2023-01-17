@@ -97,7 +97,7 @@ const StartPage = () => {
 
   return (
     <Page>
-      <VerticalSpacing height={1} />
+      <VerticalSpacing height={0.6} />
       <CenterContainer>
         {ratingInfo ? (
           <>
@@ -239,19 +239,21 @@ const StartPage = () => {
           </>
         ) : null}
         <VerticalSpacing height={1} />
-        <UserStatsPanel padding={1} width={32}>
-          {matches ? (
-            <>
-              <MatchSummary match={matches[0]} />
-              <VerticalSpacing height={0.8} />
-              <MatchSummary match={matches[1]} />
-              <VerticalSpacing height={0.8} />
-              <MatchSummary match={matches[2]} />
-            </>
-          ) : (
+        <UserPanelTitle>Matches</UserPanelTitle>
+        {matches ? (
+          <UserStatsPanel padding={2}>
+            {matches.map((match) => (
+              <>
+                <MatchSummary match={match} />
+                <VerticalSpacing height={0.8} />
+              </>
+            ))}
+          </UserStatsPanel>
+        ) : (
+          <LoaderPanel>
             <Loader />
-          )}
-        </UserStatsPanel>
+          </LoaderPanel>
+        )}
       </CenterContainer>
     </Page>
   );
@@ -295,6 +297,12 @@ const Page = styled.div`
   background-color: ${Color.Dark};
   width: 100%;
   height: 100%;
+`;
+
+const UserPanelTitle = styled.div`
+  margin-bottom: 0.4rem;
+  text-align: center;
+  width: 100%;
 `;
 
 const CenterContainer = styled.div`
