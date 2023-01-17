@@ -126,7 +126,7 @@ const StartPage = () => {
                     : Color.Red
                 }
               >
-                {(100 * status.leading) / status.activeMatches + "%"}
+                {Math.round((100 * status.leading) / status.activeMatches) + "%"}
               </StatColumn>
             </StatRow>
             <VerticalSpacing height={0.4} />
@@ -139,7 +139,7 @@ const StartPage = () => {
                     : Color.Red
                 }
               >
-                {(100 * status.leadingRatingCorrected) / status.activeMatches +
+                {Math.round((100 * status.leadingRatingCorrected) / status.activeMatches) +
                   "%"}
               </StatColumn>
             </StatRow>

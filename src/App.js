@@ -1,4 +1,3 @@
-import logo from "./logo.svg";
 import "./App.css";
 import StartPage from "./Components/Pages/StartPage";
 
