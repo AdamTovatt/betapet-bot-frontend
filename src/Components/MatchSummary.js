@@ -21,7 +21,7 @@ const MatchSummary = ({ match }) => {
           <VerticalSpacing height={1} />
           <SummaryRow align={"left"}>
             <ScorePill
-              width={matches ? 10 : 8}
+              width={matches ? 10 : 6}
               ourScore={match.ourScore}
               theirScore={match.theirScore}
             />
@@ -49,10 +49,13 @@ const ScorePill = ({ width, ourScore, theirScore }) => {
   let theirWidth = (theirScore / (ourScore + theirScore)) * width;
   return (
     <ScorePillBackground width={width}>
-      <OurScore width={ourWidth} bothRound={theirWidth === 0}>
+      <OurScore width={ourWidth} bothRound={theirWidth === 0 && ourWidth !== 0}>
         {ourScore}
       </OurScore>
-      <TheirScore width={theirWidth} bothRound={ourScore === 0}>
+      <TheirScore
+        width={theirWidth}
+        bothRound={ourWidth === 0 && theirWidth !== 0}
+      >
         {theirScore}
       </TheirScore>
     </ScorePillBackground>
@@ -113,7 +116,7 @@ const SummaryContent = styled.div`
   justify-content: space-between;
 
   @media (max-width: 540px) {
-    font-size: 1rem;
+    font-size: 0.8rem;
   }
 `;
 
