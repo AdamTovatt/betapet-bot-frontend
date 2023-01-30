@@ -38,7 +38,11 @@ export async function GetIsServer() {
     currentIp = result.ip;
   }
 
-  if (serverIp === currentIp) return true;
+  if (serverIp === currentIp) {
+    console.log("Is on same network as server");
+    return true;
+  }
+  console.log("Is not on same network as server");
   return false;
 }
 
