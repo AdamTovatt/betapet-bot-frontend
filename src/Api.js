@@ -47,15 +47,15 @@ export async function GetIsServer() {
 }
 
 export function GetBasePath() {
-  let requestPath = "https://ledigasalar.online/betapet-bot-api";
+  let requestPath = "https://sakurapi.se/betapet-bot-api";
   if (GetIsServer()) {
     console.log("will switch to server network");
-    requestPath = "http://192.168.1.89/betapet-bot-api";
+    //requestPath = "http://192.168.1.89/betapet-bot-api";
   }
   if (!process.env.NODE_ENV || process.env.NODE_ENV === "development") {
     //use local address if development
     //requestPath = "https://localhost:5001";
-    requestPath = "http://192.168.1.89/betapet-bot-api";
+    //requestPath = "http://192.168.1.89/betapet-bot-api";
   }
   return requestPath;
 }
